@@ -1,18 +1,18 @@
 # Installation for Inference in HF
 To perform inference in HF in the model GPT-2B-001_bf16_tp1.nemo you will need to create the following environment: 
 
-- python3.9 -m venv env_infer
-- source env_infer/bin/activate
+- `python3.9 -m venv env_infer`
+- `source env_infer/bin/activate`
 - `pip install -r requirements.txt`
 - `pip install torch==2.0.1+cu118 --extra-index-url https://download.pytorch.org/whl/cu118/`
 - `pip install git+https://github.com/ertkonuk/transformers.git`
 - `pip install flash-attn==2.0.5`
 
-We needed to use flash-attn==2.0.5 due to CUDA driver issues and this requires to change in your transformers github repository. Specifically, we needed to modify two files:
+We needed to use flash-attn==2.0.5 due to CUDA driver issues and this requires to modify your [transformers github repository](https://github.com/ertkonuk/transformers/tree/main). Specifically, we had to modify two files:
 - In the file `.../transformers/models/modeling_nvgpt.py`, we needed to change all names:
 flash_attn_unpadded_func > flash_attn_varlen_func
 Justification: https://pypi.org/project/flash-attn/2.3.3/.
-- In  you need to modify the class LayerNorm in `.../torch/nn/modules/normalization.py` by:
+- In `.../torch/nn/modules/normalization.py` we needed to modify the class LayerNorm by:
 ```
 class LayerNorm(Module):
     r"""Applies Layer Normalization over a mini-batch of inputs as described in
@@ -134,6 +134,22 @@ class LayerNorm(Module):
 `python load_and_infer_nemo.py gpt_model_file=./GPT-2B-001_bf16_tp1.nemo trainer.precision=bf16 server=True tensor_model_parallel_size=1 inference.greedy=True trainer.devices=1 inference.compute_logprob=True prompts=["Life is like a","How are you?"]`
 (code extracted from [/megatron_gpt_eval.py](https://github.com/NVIDIA/NeMo/blob/main/examples/nlp/language_modeling/megatron_gpt_eval.py))
 This code will save in `./example_pred` the logprob distribution assocaited with the prompts given.
-The installation procedure for this is more complex to explain, but we suppose that you already have a inference pipeline for this model. If you have problems, please let us know.
-3. Then, we use the code in `convert_nemo_to_hf.py` to change the format from .nemo to huggingface. This step is exactly equivalent to what you provided us.
-4. Finally, we load the model using `inference_hf.py` and find that the results given when we use the huggingface version and the .nemo version are different. Note that even when setting the parameters to bfloat16 precision, the precision given seems to be 8-bit floats.
+The installation procedure for this is more complex to explain, but we suppose that you already have an inference pipeline for this model. If you have problems, please let us know.
+2. Then, we use the code in `convert_nemo_to_hf.py` to change the format from .nemo to huggingface. This step is exactly equivalent to what you provided us.
+3. Finally, we load the model using `inference_hf.py` and find that the results given when we use the huggingface version and the .nemo version are different. Note that even when setting the parameters to bfloat16 precision, the precision given seems to be 8-bit floats.
+
+The results from this code are:
+Logits from HF:
+>>> logits_hf
+tensor([[[-28.5000, -28.5000, -28.5000,  ..., -28.5000, -28.5000, -28.5000],
+         [-28.3750, -28.3750, -28.3750,  ..., -28.3750, -28.3750, -28.3750],
+         [-26.2500, -26.2500, -26.2500,  ..., -26.2500, -26.2500, -26.2500],
+         [-20.3750, -20.3750, -20.3750,  ..., -20.3750, -20.3750, -20.3750]]],
+       device='cuda:0', dtype=torch.bfloat16, grad_fn=<TransposeBackward0>)
+
+Logits from .nemo:
+>>> logits_nemo
+tensor([[-17.4963, -17.4963, -17.4963,  ..., -17.4963, -17.4963, -17.4963],
+        [-19.2986, -19.2986, -19.2986,  ..., -19.2986, -19.2986, -19.2986],
+        [-20.0501, -20.0501, -20.0501,  ..., -20.0501, -20.0501, -20.0501],
+        [-19.2978, -19.2978, -19.2978,  ..., -19.2978, -19.2978, -19.2978]])
