@@ -9,8 +9,8 @@ To perform inference from the converted Huggingface version of the GPT-2B-001_bf
 - `pip install flash-attn==2.0.5`
 
 We needed to use flash-attn==2.0.5 due to CUDA driver issues and this requires to modify your [transformers github repository](https://github.com/ertkonuk/transformers/tree/main). Specifically, we had to modify two files:
-- In the file `.../transformers/models/modeling_nvgpt.py`, we needed to change all names:
-flash_attn_unpadded_func > flash_attn_varlen_func
+- In the file `.../transformers/models/modeling_nvgpt.py`, we needed to change all names: `flash_attn_unpadded_func` > `flash_attn_varlen_func`
+
 Justification: https://pypi.org/project/flash-attn/2.3.3/.
 - In `.../torch/nn/modules/normalization.py` we needed to modify the class LayerNorm by:
 ```
@@ -140,16 +140,20 @@ The installation procedure for this is more complex to explain, but we suppose t
 
 The results from this code are:
 Logits from HF:
+```
 >>> logits_hf
 tensor([[[-28.5000, -28.5000, -28.5000,  ..., -28.5000, -28.5000, -28.5000],
          [-28.3750, -28.3750, -28.3750,  ..., -28.3750, -28.3750, -28.3750],
          [-26.2500, -26.2500, -26.2500,  ..., -26.2500, -26.2500, -26.2500],
          [-20.3750, -20.3750, -20.3750,  ..., -20.3750, -20.3750, -20.3750]]],
        device='cuda:0', dtype=torch.bfloat16, grad_fn=<TransposeBackward0>)
+```
 
 Logits from .nemo:
+```
 >>> logits_nemo
 tensor([[-17.4963, -17.4963, -17.4963,  ..., -17.4963, -17.4963, -17.4963],
         [-19.2986, -19.2986, -19.2986,  ..., -19.2986, -19.2986, -19.2986],
         [-20.0501, -20.0501, -20.0501,  ..., -20.0501, -20.0501, -20.0501],
         [-19.2978, -19.2978, -19.2978,  ..., -19.2978, -19.2978, -19.2978]])
+```
