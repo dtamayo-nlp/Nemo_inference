@@ -2,10 +2,15 @@
 
 # Installation for Inference in HF:
 python3.9 -m venv env_infer
+
 source env_infer/bin/activate
+
 `pip install -r requirements.txt`
+
 `pip install torch==2.0.1+cu118 --extra-index-url https://download.pytorch.org/whl/cu118/`
+
 `pip install git+https://github.com/ertkonuk/transformers.git`
+
 `pip install flash-attn==2.0.5`
 
 We needed to use flash-attn==2.0.5 due to CUDA driver issues and this requires to change in your transformers github repository. Specifically, we needed to modify two files:
