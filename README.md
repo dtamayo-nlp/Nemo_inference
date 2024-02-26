@@ -1,5 +1,5 @@
 # Installation for Inference in HF
-To perform inference from the Huggingface converted version of the model GPT-2B-001_bf16_tp1.nemo, you might need to create the following environment: 
+To perform inference from the converted Huggingface version of the GPT-2B-001_bf16_tp1.nemo model, you may need to create the following environment:
 
 - `python3.9 -m venv env_infer`
 - `source env_infer/bin/activate`
