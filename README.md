@@ -1,4 +1,6 @@
 # Installation for Inference in HF
+To perform inference in HF in the model GPT-2B-001_bf16_tp1.nemo you will need to create the following environment: 
+
 - python3.9 -m venv env_infer
 - source env_infer/bin/activate
 - `pip install -r requirements.txt`
