@@ -1,10 +1,3 @@
-# Inference Error
-
-
-## Table of Contents
-- [Installatio for Inference in HF](installation)
-- [Steps to reproduce error](steps)
-
 # Installation for Inference in HF
 - python3.9 -m venv env_infer
 - source env_infer/bin/activate
@@ -134,7 +127,7 @@ class LayerNorm(Module):
             'elementwise_affine={elementwise_affine}'.format(**self.__dict__)
 ```
 
-## Steps to reproduce erorr
+## Steps to reproduce error
 1. Download the model `GPT-2B-001_bf16_tp1.nemo` (https://huggingface.co/nvidia/GPT-2B-001/blob/main/GPT-2B-001_bf16_tp1.nemo) and perform inference by using:
 `python load_and_infer_nemo.py gpt_model_file=./GPT-2B-001_bf16_tp1.nemo trainer.precision=bf16 server=True tensor_model_parallel_size=1 inference.greedy=True trainer.devices=1 inference.compute_logprob=True prompts=["Life is like a","How are you?"]`
 (code extracted from [/megatron_gpt_eval.py](https://github.com/NVIDIA/NeMo/blob/main/examples/nlp/language_modeling/megatron_gpt_eval.py))
