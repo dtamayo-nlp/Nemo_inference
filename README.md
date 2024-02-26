@@ -1,5 +1,5 @@
 # Installation for Inference in HF
-To perform inference in HF in the model GPT-2B-001_bf16_tp1.nemo you will need to create the following environment: 
+To perform inference from the Huggingface converted version of the model GPT-2B-001_bf16_tp1.nemo, you might need to create the following environment: 
 
 - `python3.9 -m venv env_infer`
 - `source env_infer/bin/activate`
@@ -129,14 +129,14 @@ class LayerNorm(Module):
             'elementwise_affine={elementwise_affine}'.format(**self.__dict__)
 ```
 
-## Steps to reproduce error
+## Steps to reproduce our results
 1. Download the model `GPT-2B-001_bf16_tp1.nemo` (https://huggingface.co/nvidia/GPT-2B-001/blob/main/GPT-2B-001_bf16_tp1.nemo) and perform inference by using:
 `python load_and_infer_nemo.py gpt_model_file=./GPT-2B-001_bf16_tp1.nemo trainer.precision=bf16 server=True tensor_model_parallel_size=1 inference.greedy=True trainer.devices=1 inference.compute_logprob=True prompts=["Life is like a","How are you?"]`
 (code extracted from [/megatron_gpt_eval.py](https://github.com/NVIDIA/NeMo/blob/main/examples/nlp/language_modeling/megatron_gpt_eval.py))
 This code will save in `./example_pred` the logprob distribution assocaited with the prompts given.
 The installation procedure for this is more complex to explain, but we suppose that you already have an inference pipeline for this model. If you have problems, please let us know.
-2. Then, we use the code in `convert_nemo_to_hf.py` to change the format from .nemo to huggingface. This step is exactly equivalent to what you provided us.
-3. Finally, we load the model using `inference_hf.py` and find that the results given when we use the huggingface version and the .nemo version are different. Note that even when setting the parameters to bfloat16 precision, the precision given seems to be 8-bit floats.
+2. Then, we use the code in `convert_nemo_to_hf.py` to change the format from .nemo to huggingface. This step is equivalent to what you provided.
+3. Finally, we load the model using `inference_hf.py` and find that the results given when we use the huggingface version and the .nemo version are different. Note that even when setting the parameters to bfloat16 precision, the precision given seems to be 8-bit.
 
 The results from this code are:
 Logits from HF:
